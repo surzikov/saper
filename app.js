@@ -1,13 +1,12 @@
 let table = document.querySelector('#table')
 let map = []
 let value_map = []
-let height = 20
-let width = 20
-let colors = ['grey','black','white']
+let height = 40
+let width = 40
+let colors = ['rgb(161, 161, 161)','black','rgb(224, 224, 224)']
 function randomNumber(max){
     return Math.floor(Math.random() * max) + 1
 }
-
 for(let a = 0; a < height; a++){
     let map_help_arr = []
     let tr = document.createElement('tr')
@@ -25,48 +24,68 @@ for(let a = 0; a < height; a++){
         }else{
             help_value_map.push(0)
         }
-        
     }
     table.append(tr)
     map.push(map_help_arr)
     value_map.push(help_value_map)
 }
-
-// for(let a = 0; a <map.length; a++){
-//     for(let b = 0; b<map[a].length; b++){
-//         map[a][b].style.backgroundColor = colors[value_map[a][b]]
-//     }
-// }
 let game_over = false
 table.addEventListener('click',(e)=>{
     if(game_over == false){
         let y = e.target.dataset.y*1
         let x = e.target.dataset.x*1
-        console.log(y,x)
-        let check_arr = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
+        checkCell(y,x)
+    }
+})
+document.addEventListener('mousedown',(e)=>{
+    console.log(e.button)
+})
+function checkCell(y,x){
+    let check_arr = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
+    let check_arr_help = [[0,1,2,3,4,5,6,7],[4,6,7],[3,4,5,6,7],[3,5,6],[1,2,4,6,7],[0,1,3,5,6],[1,2,4],[0,1,2,3,4],[0,1,3]]
+    let check_number
+    if(y==0&x==0){
+        check_number=1
+    }else if(y==0&x<width-1){
+        check_number=2
+    }else if(y==0&x==width-1){
+        check_number=3
+    }else if(y<height-1&x==0){
+        check_number=4
+    }else if(y<height-1&x==width-1){
+        check_number=5
+    }else if(y==height-1&x==0){
+        check_number=6
+    }else if(y==height-1&x<width-1){
+        check_number=7
+    }else if(y==height-1&x==width-1){
+        check_number=8
+    }else{
+        check_number=0
+    }
         if(value_map[y][x] == 1){
             map[y][x].style.backgroundColor = colors[1]
             game_over = true
-            alert('heheheha')
         }
         if(value_map[y][x] == 0){
             let bomb_counter = 0
-            for(let a = 0; a<check_arr.length;a++){
-                console.log(check_arr[a])
-                if(value_map[y + check_arr[a][0]][x + check_arr[a][1]] == 1){
+            for(let a = 0; a<check_arr_help[check_number].length;a++){
+                
+                if(value_map[y + check_arr[check_arr_help[check_number][a]][0]][x + check_arr[check_arr_help[check_number][a]][1]] == 1){
                     bomb_counter++
                 }
             }
             if(bomb_counter == 0){
-                for(let a = 0; a<check_arr.length;a++){
-                    map[y + check_arr[a][0]][x + check_arr[a][1]].style.backgroundColor = colors[2]
-                    value_map[y + check_arr[a][0]][x + check_arr[a][1]] = 2
+                for(let a = 0; a<check_arr_help[check_number].length;a++){
+                    map[y][x].style.backgroundColor = colors[2]
+                    value_map[y][x] = 2
+                    for(let b =0;a<check_arr_help[check_number].length;a++){
+                        checkCell(y+check_arr[check_arr_help[check_number][a]][0],x+check_arr[check_arr_help[check_number][a]][1])
+                    }
                 }
             }else{
-                e.target.innerHTML = bomb_counter
+                map[y][x].innerHTML = bomb_counter
             }
-            
             map[y][x].style.backgroundColor = colors[2]
         }
-    }
-})
+}
