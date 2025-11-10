@@ -2,9 +2,9 @@ table{
     border-spacing: 0px;
 }
 td{
-    border: 1px solid black;
+    border: 0.1vw solid black;
     height: 1vw;
     text-align: center;
     width: 1vw;
-    font-size: 10px;
+    font-size: 1.3vw;
 }
