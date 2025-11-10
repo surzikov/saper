@@ -3,7 +3,8 @@ let map = []
 let value_map = []
 let height = 40
 let width = 40
-let colors = ['rgb(161, 161, 161)','black','rgb(224, 224, 224)']
+let font_colors = ['blue','green','yellow','orange','red','pink','purple','brown']
+let colors = [['rgb(161, 161, 161)','rgb(100, 161, 161)'],'black','rgb(140, 140, 170)']
 function randomNumber(max){
     return Math.floor(Math.random() * max) + 1
 }
@@ -15,8 +16,9 @@ for(let a = 0; a < height; a++){
         let td = document.createElement('td')
         td.dataset.x = b
         td.dataset.y = a
+        td.dataset.type = 0
         tr.appendChild(td)
-        td.style.backgroundColor = colors[0]
+        td.style.backgroundColor = colors[0][0]
         map_help_arr.push(td)
         let random = randomNumber(5)
         if(random == 1){
@@ -38,7 +40,16 @@ table.addEventListener('click',(e)=>{
     }
 })
 document.addEventListener('mousedown',(e)=>{
-    console.log(e.button)
+    if(e.button == 1){
+        if(e.target.dataset.type == 0){
+            map[e.target.dataset.y*1][e.target.dataset.x*1].style.backgroundColor = colors[0][1]
+            e.target.dataset.type = 1
+        }else{
+            map[e.target.dataset.y*1][e.target.dataset.x*1].style.backgroundColor = colors[0][0]
+            e.target.dataset.type = 0
+        }
+        
+    }
 })
 function checkCell(y,x){
     let check_arr = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
@@ -64,7 +75,15 @@ function checkCell(y,x){
         check_number=0
     }
         if(value_map[y][x] == 1){
-            map[y][x].style.backgroundColor = colors[1]
+            
+            for(let a = 0; a<height;a++){
+                for(let b = 0; b<width;b++){
+                    if(value_map[a][b] == 1){
+                        map[a][b].style.backgroundColor = colors[1]
+                    }
+                    
+                }
+            }
             game_over = true
         }
         if(value_map[y][x] == 0){
@@ -85,6 +104,7 @@ function checkCell(y,x){
                 }
             }else{
                 map[y][x].innerHTML = bomb_counter
+                map[y][x].style.color = font_colors[bomb_counter-1]
             }
             map[y][x].style.backgroundColor = colors[2]
         }
